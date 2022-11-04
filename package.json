@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Broker implementation for an application based on IoT technologies.",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "testExample": "nodemon client_example.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +20,9 @@
   },
   "homepage": "https://github.com/Ramh28/broker_implementation#readme",
   "dependencies": {
-    "socket.io": "^4.5.3"
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
+    "socket.io": "^4.5.3",
+    "socket.io-client": "^4.5.3"
   }
 }
