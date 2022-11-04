@@ -1,0 +1,22 @@
+{
+  "name": "broker_implementation",
+  "version": "1.0.0",
+  "description": "Broker implementation for an application based on IoT technologies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ramh28/broker_implementation.git"
+  },
+  "author": "Muñoz H. Rafael A.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ramh28/broker_implementation/issues"
+  },
+  "homepage": "https://github.com/Ramh28/broker_implementation#readme",
+  "dependencies": {
+    "socket.io": "^4.5.3"
+  }
+}
