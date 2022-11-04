@@ -1,9 +1,5 @@
-import { io } from "socket.io-client";
+const io = require('socket.io-client');
 
-const socket = io("http://localhost:3300");
+let socket;
 
-socket.emit("Hola desde el cliente. ", 5, "6", {7: Uint8Array.from([8])});
-
-socket.on("hello from server", (...args) => {
-
-});
+socket = io.connect('http://localhost:3000');
