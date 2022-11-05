@@ -1,0 +1,14 @@
+Hola, soy un eventohola
+noel, soy un evento
+Hola rafa, soy un evento bombillo Y ME PRENDO
+Probando lo probable
+erew
+[object Object]
+autor: 192.01.15 evento: prendi el suiche
+autor: 192.01.15 evento: prendi el suiche
+autor: 192.01.15 evento: prendi el suiche
+autor: 192.01.15 evento: prendi el suiche
+autor: undefined evento: undefined
+autor: undefined evento: hola
+autor: ::1 evento: a
+autor: ::ffff:192.168.100.4 evento: asdfas
