@@ -21,7 +21,8 @@ function subscribeToTopic(topic, socket){
 
     topics.forEach(element => {
         if(topic == element.name){
-            console.log("entre en subscribeToTopic")
+            console.log("entre en subscribeToTopic");
+            
             element.on("connection", () => {
                 console.log("subscrito");
             })
