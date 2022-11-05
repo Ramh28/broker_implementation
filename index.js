@@ -1,14 +1,16 @@
-let express = require('express');
-let socket = require('socket.io');
+import express from 'express';
 
-let app = express();
+import { Server } from 'socket.io';
+
+const app = express();
+
 let server = app.listen(3000);
 
 app.use(express.static('public'));
 
 let topics = [];
 
-const io = socket(server);
+const io = new Server(server)
 
 io.sockets.on('connection', newConnection);
 
