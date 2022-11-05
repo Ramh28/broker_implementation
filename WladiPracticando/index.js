@@ -10,12 +10,12 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(socket.id);
-  console.log(socket.conn.remoteAddress)
+  console.log('\n' + socket.id);
+  console.log('\n' + socket.conn.remoteAddress + '\n')
 
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
-    console.log('message: ' + msg);
+    console.log('\n message: ' + msg);
   });
 
   socket.on('disconnect', () => {
