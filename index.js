@@ -43,9 +43,10 @@ class topic {
     }
 
     setSavedMessage(SavedMessage){
-        if(this.suscribers.lenght == 0){
+        if(this.suscribers.length == 0){
             this.SavedMessage = SavedMessage;
         }
+
     }
 
     writeLastWillMessage(){
@@ -54,12 +55,14 @@ class topic {
 
     //funcion que crea sub topicos.
 
+    //Mode 1: Subscrpcion.
+    //Mode 0: Publicacion.
+    
     createSubTopics(arrayOfTopics, ID_client, message, mode){
 
         if(arrayOfTopics.length == 0 && mode == 0){
 
-            this.suscribers.push(ID_client);
-            this.SavedMessage = message;
+            this.setSavedMessage(message);
             return;
         }
 
@@ -100,22 +103,42 @@ function newConnection(socket){
     // Callback es la respueta que da el broker con respecto a la peticion del cliente.
     socket.on("PUBLISH", (topic_dir, message, callback) => {
 
+        let boolean = false;
+
         let arrayOfTopics = getTopics(topic_dir);
 
-        let newTopic = new topic(arrayOfTopics[0]);
+        let index;
 
-        topics.push(newTopic);
+        for(let i = 0; i < topics.length; i++){
+            console.log("entre aqui");
 
-        for (let i = 0; i < topics.length; i++) {
-            
-            if(topics[0].topic_name == arrayOfTopics[0]){
-                arrayOfTopics.shift();
-                topics[i].createSubTopics(arrayOfTopics, socket.ID, message, 0);
+            if( topics[i].topic_name == arrayOfTopics[0] ){
+                boolean = true;
+                index = i;
             }
         }
-        
+
+        if(boolean == true ){
+            arrayOfTopics.shift();
+            topics[index].createSubTopics(arrayOfTopics, socket.id, message, 0);
+        } else if (boolean == false){
+            let newTopic = new topic(arrayOfTopics[0]);
+
+            topics.push(newTopic);
+
+            for (let i = 0; i < topics.length; i++) {
+                
+                if(topics[i].topic_name == arrayOfTopics[0]){
+                    arrayOfTopics.shift();
+                    topics[i].createSubTopics(arrayOfTopics, socket.id, message, 0);
+                }
+            }
+        } else {
+            console.log("error");
+        }
+
+        console.log(topics);
         console.log(topics[0].subTopic[0].subTopic[0].suscribers);
-        console.log(topics[0].subTopic[0].subTopic[0].SavedMessage);
     });
 
     socket.on("SUBSCRIBE", (topic, callback) => {
