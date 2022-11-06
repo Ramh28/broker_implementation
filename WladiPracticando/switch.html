@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<head>
+  <title>Switch</title>
+  <link rel="stylesheet" href="./clientes/styles/bombillo.css">
+</head>
+<body id="app">
+  <button 
+    class="accionador" 
+    id="1" 
+    >
+      Bombillo Wladi apagado
+    </button>
+  <button class="accionador" id="2" disabled="disabled">Bombillo Cesar</button>
+  <button class="accionador" id="3" disabled="disabled">Bombillo Otro</button>
+  <button class="accionador" id="4" disabled="disabled">Bombillo Otro</button>
+  <button class="accionador" id="5" disabled="disabled">Bombillo Otro</button>
+  <button class="accionador" id="6" disabled="disabled">Bombillo Otro</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', {ip: '', event: input.value});
+          input.value = '';
+        }
+      });
+
+      socket.on('chat message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = 'Esto es quien lo manda: '+' Hace: ' + msg.event;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  
+  
+  
+  
+  
+  
+  <script>
+    // const { createApp } = Vue;
+
+    // const app = Vue.createApp({
+    //   data() {
+    //     return {
+    //       bombilloWladi: false,
+    //       estado: 'apagado',
+    //       img: './clientes/apagado.jpg',
+    //       socket: io()
+    //     }
+    //   },
+    //   methods: {
+    //     accionarBombilloWladi(){
+    //       this.bombilloWladi = !this.bombilloWladi;
+    //       if (this.bombilloWladi){
+    //         this.estado = 'prendido';
+    //         this.img = './clientes/prendido.png';
+    //       }else{
+    //         this.estado = 'apagado';
+    //         this.img = './clientes/apagado.jpg';
+    //       }
+
+    //       // var socket = io();
+    //       this.socket.emit('chat message', {ip: '', event: this.bombilloWladi});
+    //     }
+    //   },
+    //   mounted() {
+
+    //     // var socket = io();
+    //     // var bombillo = document.getElementById('1');
+
+    //     // bombillo.addEventListener('click', function(e) {
+    //     //   e.preventDefault();
+    //     //   socket.emit('chat message', {ip: '', event: this.bombilloWladi});
+    //     // });
+
+    //     }
+    // })
+    // app.mount("#app");
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bombillo</title>
+  <link rel="stylesheet" href="./clientes/styles/bombillo.css">
+</head>
+<body id="app">
+  
+  <H1>Soy un bombillo {{ estado }}</H1>
+
+  <img :src="img" alt="">
+  <button @click = "accionarBombillo" >accioname</button>
+
+
+  <script src="https://unpkg.com/vue@next"></script>
+  <script>
+    const { createApp } = Vue;
+
+    const app = Vue.createApp({
+      data() {
+        return {
+          bombillo: false,
+          estado: 'apagado',
+          img: './clientes/apagado.jpg'
+        }
+      },
+      methods: {
+        accionarBombillo(){
+          this.bombillo = !this.bombillo;
+          if (this.bombillo){
+            this.estado = 'prendido';
+            this.img = './clientes/prendido.png';
+          }else{
+            this.estado = 'apagado';
+            this.img = './clientes/apagado.jpg';
+          }
+        }
+      },
+      mounted() {
+        }
+    })
+    app.mount("#app")
+  </script>
+
+  
+
+</body>
+</html>
