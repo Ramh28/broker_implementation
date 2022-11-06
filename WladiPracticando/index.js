@@ -12,6 +12,14 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/switch', (req, res) => {
+  res.sendFile(__dirname + '/switch.html');
+});
+app.get('/bombillo', (req, res) => {
+  res.sendFile(__dirname + '/bombillo.html');
+});
+
+
 io.on('connection', (socket) => {
   console.log('\n' + socket.id);
   console.log('\n' + socket.conn.remoteAddress + '\n')
@@ -28,9 +36,12 @@ io.on('connection', (socket) => {
       }
       console.log(msg.event);
     })
-
-
   });
+
+  socket.on('bombilloWladi', (boleano)=> {
+    console.log('Estado del bombillo: ' + boleano);
+    io.emit('bombilloWladi', boleano);
+  })
 
   socket.on('disconnect', () => {
     console.log('user disconnected');

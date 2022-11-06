@@ -5,7 +5,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bombillo</title>
-  <link rel="stylesheet" href="./clientes/styles/bombillo.css">
 </head>
 <body id="app">
   
@@ -15,6 +14,7 @@
   <button @click = "accionarBombillo" >accioname</button>
 
 
+  <script src="/socket.io/socket.io.js"></script>
   <script src="https://unpkg.com/vue@next"></script>
   <script>
     const { createApp } = Vue;
@@ -24,7 +24,8 @@
         return {
           bombillo: false,
           estado: 'apagado',
-          img: './clientes/apagado.jpg'
+          img: './clientes/apagado.jpg',
+          socket : io()
         }
       },
       methods: {
@@ -32,7 +33,7 @@
           this.bombillo = !this.bombillo;
           if (this.bombillo){
             this.estado = 'prendido';
-            this.img = './clientes/prendido.png';
+            this.img = './clientes/apagado.jpg';
           }else{
             this.estado = 'apagado';
             this.img = './clientes/apagado.jpg';
@@ -40,6 +41,12 @@
         }
       },
       mounted() {
+
+        this.socket.on('bombilloWladi', (boleano)=> {
+          console.log('Estado del bombillo: ' + boleano);
+          this.estado = boleano;
+        })
+
         }
     })
     app.mount("#app")
