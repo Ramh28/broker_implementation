@@ -141,7 +141,17 @@ function newConnection(socket){
         console.log(topics[0].subTopic[0].subTopic[0].suscribers);
     });
 
-    socket.on("SUBSCRIBE", (topic, callback) => {
+    socket.on("SUBSCRIBE", (topic_dir, callback) => {
+
+        for(let i = 0; i < topics.length; i++){
+            console.log("entre aqui");
+
+            if( topics[i].topic_name == arrayOfTopics[0] ){
+                boolean = true;
+                index = i;
+            }
+        }
+
 
         callback("SUBACK");
     });
