@@ -19,3 +19,7 @@ socket.emit("PUBLISH", "home/kitchen/room_lights", "79", (response) => {
 socket.emit("PUBLISH", "home/room/room_lights", "80", (response) => {
   console.log(response);
 });
+
+socket.emit("PUBLISH", "home/room/room_lights", "80", (response) => {
+  console.log(response);
+});

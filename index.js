@@ -24,6 +24,26 @@ function getTopics(complete_topic){
     return topics;
 }
 
+function searchTopics(topics, arrayOfTopics){
+
+    let arrayTopics = arrayOfTopics;
+
+    if(topics.length == 0){
+        return false;
+    }
+
+    if(arrayTopics.length == 0){
+        console.log("Encontraste el destino boludo");
+        return true;
+    }
+
+    for (let index = 0; index < topics.length; index++){
+        if( topics[index].topic_name == arrayTopics[0] ){
+            arrayTopics.shift();
+            searchTopics(topics[index].subTopic, arrayTopics);
+        }
+    }
+}
 //clase topico.
 
 class topic {
@@ -53,6 +73,9 @@ class topic {
         return(lastWillMessage);
     }
 
+    sendMessageToSubscribers(){
+        return this.SavedMessage
+    }
     //funcion que crea sub topicos.
 
     //Mode 1: Subscrpcion.
@@ -70,16 +93,39 @@ class topic {
             return;
         }
 
-        let newTopic = new topic(arrayOfTopics[0]);
+        let boolean = false;
 
-        this.subTopic.push(newTopic);
+        let index;
 
-        for (let i = 0; i < this.subTopic.length; i++) {
-            
-            if(this.subTopic[i].topic_name == arrayOfTopics[0]){
-                arrayOfTopics.shift();
-                this.subTopic[i].createSubTopics(arrayOfTopics, ID_client, message, mode);
+        console.log(arrayOfTopics);
+
+        for(let i = 0; i < this.subTopic.length; i++){
+
+            if( this.subTopic[i].topic_name == arrayOfTopics[0] ){
+                boolean = true;
+                index = i;
             }
+        }
+
+        if(boolean == true ){
+            arrayOfTopics.shift();
+            this.subTopic[index].createSubTopics(arrayOfTopics, ID_client, message, 0);
+        } else 
+        if (boolean == false){
+
+            let newTopic = new topic(arrayOfTopics[0]);
+
+            this.subTopic.push(newTopic);
+
+            for (let i = 0; i < this.subTopic.length; i++) {
+                
+                if(this.subTopic[i].topic_name == arrayOfTopics[0]){
+                    arrayOfTopics.shift();
+                    this.subTopic[i].createSubTopics(arrayOfTopics, ID_client, message, 0);
+                }
+            }
+        } else {
+            console.log("error");
         }
         
     }
@@ -105,12 +151,11 @@ function newConnection(socket){
 
         let boolean = false;
 
-        let arrayOfTopics = getTopics(topic_dir);
-
         let index;
 
+        let arrayOfTopics = getTopics(topic_dir);
+
         for(let i = 0; i < topics.length; i++){
-            console.log("entre aqui");
 
             if( topics[i].topic_name == arrayOfTopics[0] ){
                 boolean = true;
@@ -119,9 +164,12 @@ function newConnection(socket){
         }
 
         if(boolean == true ){
+
             arrayOfTopics.shift();
             topics[index].createSubTopics(arrayOfTopics, socket.id, message, 0);
+
         } else if (boolean == false){
+
             let newTopic = new topic(arrayOfTopics[0]);
 
             topics.push(newTopic);
@@ -133,12 +181,13 @@ function newConnection(socket){
                     topics[i].createSubTopics(arrayOfTopics, socket.id, message, 0);
                 }
             }
-        } else {
-            console.log("error");
-        }
 
+        } else {
+
+            console.log("error");
+
+        }
         console.log(topics);
-        console.log(topics[0].subTopic[0].subTopic[0].suscribers);
     });
 
     socket.on("SUBSCRIBE", (topic, callback) => {
