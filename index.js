@@ -87,7 +87,6 @@ function escribirLog(socket, ruta, evento){
         if (error){
           throw error;
         }
-        console.log(evento);
     })
 }
 
@@ -108,10 +107,12 @@ function suscribe(topicActual,route,idCliente) {
                 topicActual.addSubTopic(actualRaiz);
                 indice = topicActual.subTopic.indexOf(actualRaiz);
             }
-            
+            // console.log('suscrito')
             suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
         }
     }else{
+        // console.log('suscritor annadido');
+        // console.log(topicActual.topicName);
         topicActual.addSubscriber(idCliente);
     }
 };
@@ -122,6 +123,7 @@ function suscribe(topicActual,route,idCliente) {
 
 io.on('connect', (socket) => {
     console.log('conecte: ' + socket.id);
+    console.log(topic.topicName);
   
     escribirLog(socket, '/', 'connect')
 
@@ -138,8 +140,6 @@ io.on('connect', (socket) => {
 
     socket.on('PUBLISH', (msg, ruta, callback) => {
         // topic.emitPublish(msg, route, topic);
-        console.log('publicando ando');
-        console.log(msg);
 
 
         escribirLog(socket, ruta, 'PUBLISH')
@@ -148,15 +148,17 @@ io.on('connect', (socket) => {
 
     socket.on('SUBSCRIBE', (msg, ruta, callback) => {
         // suscribe(topic,route,socket.id);
-        console.log('publicando ando');
 
+        suscribe(topic,ruta,socket.id);
+
+        console.log('suscritor de ' + topic.subscribers[0])
 
         escribirLog(socket, ruta, 'SUBSCRIBE');
         callback("SUBSCRIBE CON EXITO");
     });
+
     socket.on('UNSUBSCRIBE', (msg, ruta, callback) => {
         // unsuscribe(topic,route,socket.id)
-        console.log('publicando ando');
 
         escribirLog(socket, ruta, 'UNSUBSCRIBE')
         callback("UNSUBSCRIBE CON EXITO");

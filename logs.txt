@@ -1,66 +1,36 @@
-autor: ::ffff:127.0.0.1 evento: undefined
-autor: ::ffff:127.0.0.1 evento: function () {
-            // prevent double callbacks
-            if (sent)
-                return;
-            const args = Array.prototype.slice.call(arguments);
-            debug("sending ack %j", args);
-            self.packet({
-                id: id,
-                type: socket_io_parser_1.PacketType.ACK,
-                data: args,
-            });
-            sent = true;
-        }
-autor: ::ffff:127.0.0.1 evento: function () {
-            // prevent double callbacks
-            if (sent)
-                return;
-            const args = Array.prototype.slice.call(arguments);
-            debug("sending ack %j", args);
-            self.packet({
-                id: id,
-                type: socket_io_parser_1.PacketType.ACK,
-                data: args,
-            });
-            sent = true;
-        }
-autor: ::ffff:127.0.0.1 evento: function () {
-            // prevent double callbacks
-            if (sent)
-                return;
-            const args = Array.prototype.slice.call(arguments);
-            debug("sending ack %j", args);
-            self.packet({
-                id: id,
-                type: socket_io_parser_1.PacketType.ACK,
-                data: args,
-            });
-            sent = true;
-        }
-autor: ::ffff:127.0.0.1 evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde el cliente
-autor: ::ffff:127.0.0.1 ruta: /home/room/tv evento: saludo desde mi sofa
+
 autor: ::ffff:127.0.0.1 Topico: / evento: connect
 autor: ::ffff:127.0.0.1 Topico: / evento: connect
-autor: ::ffff:127.0.0.1 Topico: / evento: connect
-autor: ::ffff:127.0.0.1 Topico: /home/room/tv evento: PUBLISH
-autor: ::ffff:127.0.0.1 Topico: / evento: connect
-autor: ::ffff:127.0.0.1 Topico: /home/room/tv evento: PUBLISH
 autor: ::ffff:127.0.0.1 Topico: / evento: connect
 autor: ::ffff:127.0.0.1 Topico: /home/room/tv evento: PUBLISH
 autor: ::ffff:127.0.0.1 Topico: /home/room/tv evento: SUBSCRIBE
 autor: ::ffff:127.0.0.1 Topico: /home/room/tv evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: PUBLISH
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: PUBLISH
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: PUBLISH
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: PUBLISH
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: PUBLISH
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: / evento: connect
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: PUBLISH
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: UNSUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: / evento: connect

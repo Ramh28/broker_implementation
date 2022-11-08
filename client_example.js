@@ -2,7 +2,7 @@ const io  = require('socket.io-client')
 
 let socket;
 let msg = 'saludo desde mi sofa';
-let ruta = '/home/room/tv'
+let ruta = '/home/room/tv/'
 socket = io.connect('http://localhost:3000');
 
 socket.on("connect", () => {
