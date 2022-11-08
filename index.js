@@ -7,7 +7,6 @@ const io = new Server(server);
 
 const fs = require('fs');
 const { Socket } = require('socket.io-client');
-const { publicDecrypt } = require('crypto');
 
 
 class Topic{
@@ -83,6 +82,15 @@ class Topic{
 
 let topic = new Topic('/');
 
+function escribirLog(socket, ruta, evento){
+    fs.appendFile('./logs.txt', 'autor: ' + socket.conn.remoteAddress + ' Topico: '+ ruta + ' evento: ' + evento + '\n', (error)=>{
+        if (error){
+          throw error;
+        }
+        console.log(evento);
+    })
+}
+
 function suscribe(topicActual,route,idCliente) {
     posicionRaiz = route.indexOf('/');
 
@@ -109,20 +117,49 @@ function suscribe(topicActual,route,idCliente) {
 };
 
 // Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
-io.sockets.on('connection', newConnection);
+// io.sockets.on('connection', newConnection);
 
 
-io.on('CONNECT', (socket) => {
+io.on('connect', (socket) => {
+    console.log('conecte: ' + socket.id);
   
-    socket.on('PUBLISH', (msg, route) => {
-        topic.emitPublish(msg, route, topic);
-    });
+    escribirLog(socket, '/', 'connect')
+
+    // socket.on('PUBLISH', (msg, route) => {
+    //     topic.emitPublish(msg, route, topic);
+    // });
     
-    socket.on('SUBSCRIBE', (route) => {
-        suscribe(topic,route,socket.id);
+    // socket.on('SUBSCRIBE', (route) => {
+    //     suscribe(topic,route,socket.id);
+    // });
+    // socket.on('UNSUBSCRIBE', () => {
+    //     unsuscribe(topic,route,socket.id)
+    // });
+
+    socket.on('PUBLISH', (msg, ruta, callback) => {
+        // topic.emitPublish(msg, route, topic);
+        console.log('publicando ando');
+        console.log(msg);
+
+
+        escribirLog(socket, ruta, 'PUBLISH')
+        callback("PUBLICASTE CON EXITO");
     });
-    socket.on('UNSUBSCRIBE', () => {
-        unsuscribe(topic,route,socket.id)
+
+    socket.on('SUBSCRIBE', (msg, ruta, callback) => {
+        // suscribe(topic,route,socket.id);
+        console.log('publicando ando');
+
+
+        escribirLog(socket, ruta, 'SUBSCRIBE');
+        callback("SUBSCRIBE CON EXITO");
+    });
+    socket.on('UNSUBSCRIBE', (msg, ruta, callback) => {
+        // unsuscribe(topic,route,socket.id)
+        console.log('publicando ando');
+
+        escribirLog(socket, ruta, 'UNSUBSCRIBE')
+        callback("UNSUBSCRIBE CON EXITO");
     });
     
 });
