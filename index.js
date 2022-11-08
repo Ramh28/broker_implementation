@@ -7,6 +7,7 @@ const io = new Server(server);
 
 const fs = require('fs');
 const { Socket } = require('socket.io-client');
+const { publicDecrypt } = require('crypto');
 
 
 class Topic{
@@ -51,8 +52,32 @@ class Topic{
 
         this.subTopic.push(subTopic);
     };
-    emitPublish(msg){
-        io.emit(this.topicName,msg);
+    emitPublish(msg, route, topic){
+
+        posicionRaiz = route.indexOf('/');
+
+        if (posicionRaiz!=0) {
+            actualRaiz = route.slice(0, posicionRaiz+1);
+            siguienteRaiz = route.slice(posicionRaiz+1);
+    
+            if (siguienteRaiz.length == 0) {
+                this.subscribers.forEach(element => {
+                    element.emit(msg);
+                });
+            }else{
+    
+                let indice = topicActual.subTopic.indexOf(actualRaiz);
+                
+                if (indice== -1) {
+                    topicActual.addSubTopic(actualRaiz);
+                    indice = topicActual.subTopic.indexOf(actualRaiz);
+                }
+                
+                suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
+            }
+        }
+
+
     }
 }
 
@@ -60,17 +85,22 @@ let topic = new Topic('/');
 
 function suscribe(topicActual,route,idCliente) {
     posicionRaiz = route.indexOf('/');
+
     if (posicionRaiz!=0) {
         actualRaiz = route.slice(0, posicionRaiz+1);
         siguienteRaiz = route.slice(posicionRaiz+1);
-        if (siguienteRaiz.length <= 0) {
+
+        if (siguienteRaiz.length == 0) {
             topicActual.addSubscriber(idCliente);
         }else{
+
             let indice = topicActual.subTopic.indexOf(actualRaiz);
+            
             if (indice== -1) {
                 topicActual.addSubTopic(actualRaiz);
                 indice = topicActual.subTopic.indexOf(actualRaiz);
             }
+            
             suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
         }
     }else{
@@ -84,15 +114,15 @@ io.sockets.on('connection', newConnection);
 
 io.on('CONNECT', (socket) => {
   
-    socket.on('PUBLISH', (msg) => {
-      socket
+    socket.on('PUBLISH', (msg, route) => {
+        topic.emitPublish(msg, route, topic);
     });
     
     socket.on('SUBSCRIBE', (route) => {
         suscribe(topic,route,socket.id);
     });
     socket.on('UNSUBSCRIBE', () => {
-        
+        unsuscribe(topic,route,socket.id)
     });
     
 });
