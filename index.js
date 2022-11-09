@@ -91,30 +91,64 @@ function escribirLog(socket, ruta, evento){
 }
 
 function suscribe(topicActual,route,idCliente) {
-    posicionRaiz = route.indexOf('/');
 
-    if (posicionRaiz!=0) {
-        actualRaiz = route.slice(0, posicionRaiz+1);
-        siguienteRaiz = route.slice(posicionRaiz+1);
+    let indexSlash = route.indexOf('/');
+    let rutaActual = route.slice(1, indexSlash+1);
 
-        if (siguienteRaiz.length == 0) {
-            topicActual.addSubscriber(idCliente);
-        }else{
+    // Se alcanzo la ruta maxima.
 
-            let indice = topicActual.subTopic.indexOf(actualRaiz);
-            
-            if (indice== -1) {
-                topicActual.addSubTopic(actualRaiz);
-                indice = topicActual.subTopic.indexOf(actualRaiz);
-            }
-            // console.log('suscrito')
-            suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
-        }
-    }else{
-        // console.log('suscritor annadido');
-        // console.log(topicActual.topicName);
+    if ( indexSlash == 0 && route.length == 1 ){
+
         topicActual.addSubscriber(idCliente);
+
+        return;
     }
+
+    if ( route.length == 0 ) {
+        topicActual.addSubscriber(idCliente);
+
+        return;
+    }
+
+    if ( indexSlash == -1 && route.length > 0 ){
+        
+        let continuacionRuta = route.slice(indexSlash+1, route.length);
+        
+        topicActual.addSubTopic(rutaActual);
+
+        suscribe( topicActual.subTopic[0], continuacionRuta, idCliente );
+
+        return;
+    }
+
+
+
+
+
+    // console.log(actualRaiz = route.slice(0, posicionRaiz+1));
+    // console.log(siguienteRaiz = route.slice(posicionRaiz+1))
+    // if (posicionRaiz!=0) {
+    //     actualRaiz = route.slice(0, posicionRaiz+1);
+    //     siguienteRaiz = route.slice(posicionRaiz+1);
+
+    //     if (siguienteRaiz.length == 0) {
+    //         topicActual.addSubscriber(idCliente);
+    //     }else{
+
+    //         let indice = topicActual.subTopic.indexOf(actualRaiz);
+            
+    //         if (indice== -1) {
+    //             topicActual.addSubTopic(actualRaiz);
+    //             indice = topicActual.subTopic.indexOf(actualRaiz);
+    //         }
+    //         // console.log('suscrito')
+    //         suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
+    //     }
+    // }else{
+    //     // console.log('suscritor annadido');
+    //     // console.log(topicActual.topicName);
+    //     topicActual.addSubscriber(idCliente);
+    // }
 };
 
 // Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
@@ -151,7 +185,7 @@ io.on('connect', (socket) => {
 
         suscribe(topic,ruta,socket.id);
 
-        console.log('suscritor de ' + topic.subscribers[0])
+        console.log('suscritor de ' + topic.topicName)
 
         escribirLog(socket, ruta, 'SUBSCRIBE');
         callback("SUBSCRIBE CON EXITO");
