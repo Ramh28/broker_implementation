@@ -94,7 +94,14 @@ function suscribe(topicActual,route,idCliente) {
 
     let posicionRaiz = route.indexOf('/');
 
-    //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
+    if( posicionRaiz == 0 && route.length == 1){
+
+        this.subTopic.forEach( element => {
+            element.addSubscriber(idCliente);
+        })
+    }
+
+      //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
 
     if( posicionRaiz == -1 && route.length == 0){
 
