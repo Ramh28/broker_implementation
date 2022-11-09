@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bombillo</title>
+  <link rel="stylesheet" href="/bombillo/stilos">
 </head>
 <body id="app">
   
@@ -24,7 +25,7 @@
         return {
           bombillo: false,
           estado: 'apagado',
-          img: './clientes/apagado.jpg',
+          img: '/bombilloApagado',
           socket : io()
         }
       },
@@ -33,21 +34,30 @@
           this.bombillo = !this.bombillo;
           if (this.bombillo){
             this.estado = 'prendido';
-            this.img = './clientes/apagado.jpg';
+            this.img = '/bombilloPrendido';
           }else{
             this.estado = 'apagado';
-            this.img = './clientes/apagado.jpg';
+            this.img = '/bombilloApagado';
           }
+          console.log(this.estado);
         }
       },
       mounted() {
 
         this.socket.on('bombilloWladi', (boleano)=> {
+          this.bombillo = boleano;
           console.log('Estado del bombillo: ' + boleano);
-          this.estado = boleano;
+
+          if (this.bombillo){
+            this.estado = 'prendido';
+            this.img = '/bombilloPrendido';
+          }else{
+            this.estado = 'apagado';
+            this.img = '/bombilloApagado';
+          }
         })
 
-        }
+      }
     })
     app.mount("#app")
   </script>

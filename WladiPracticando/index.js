@@ -18,6 +18,15 @@ app.get('/switch', (req, res) => {
 app.get('/bombillo', (req, res) => {
   res.sendFile(__dirname + '/bombillo.html');
 });
+app.get('/bombilloPrendido', (req, res) => {
+  res.sendFile(__dirname + '/clientes/prendido.png');
+});
+app.get('/bombilloApagado', (req, res) => {
+  res.sendFile(__dirname + '/clientes/apagado.jpg');
+});
+app.get('/bombillo/stilos', (req, res) => {
+  res.sendFile(__dirname + '/clientes/styles/bombillo.css');
+});
 
 
 io.on('connection', (socket) => {
@@ -41,6 +50,12 @@ io.on('connection', (socket) => {
   socket.on('bombilloWladi', (boleano)=> {
     console.log('Estado del bombillo: ' + boleano);
     io.emit('bombilloWladi', boleano);
+    fs.appendFile('./logs.txt', 'autor: ' + socket.conn.remoteAddress + ' evento: ' + boleano + '\n', (error)=>{
+      if (error){
+        throw error;
+      }
+      console.log(boleano);
+    })
   })
 
   socket.on('disconnect', () => {

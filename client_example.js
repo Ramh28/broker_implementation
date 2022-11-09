@@ -1,21 +1,25 @@
-import { io } from 'socket.io-client'
+const io  = require('socket.io-client')
 
 let socket;
-
+let msg = 'saludo desde mi sofa';
+let ruta = 'home/room/tv/'
 socket = io.connect('http://localhost:3000');
 
-socket.emit("CONNECT", "topico", (response) => {
-  console.log("CONNACK")
+socket.on("connect", () => {
+  console.log('cliente conectado: ' + socket.connected); // true
 });
 
-socket.emit("SUBSCRIBE", "home/cocina/lucesAltas", (response) => {
-  console.log(response);
+socket.emit("PUBLISH", msg, ruta, (response) => {
+  console.log(response); // "got it"
+});
+socket.emit("SUBSCRIBE", msg, ruta, (response) => {
+  console.log(response); // "got it"
+});
+socket.emit("UNSUBSCRIBE", msg, ruta, (response) => {
+  console.log(response); // "got it"
 });
 
-socket.emit("PUBLISH", "home/kitchen/room_lights", "79", (response) => {
-  console.log(response);
-});
-
+<<<<<<< HEAD
 socket.emit("PUBLISH", "home/room/room_lights", "80", (response) => {
   console.log(response);
 });
@@ -23,3 +27,8 @@ socket.emit("PUBLISH", "home/room/room_lights", "80", (response) => {
 socket.emit("PUBLISH", "home/room/room_lights", "80", (response) => {
   console.log(response);
 });
+=======
+
+
+
+>>>>>>> libreri

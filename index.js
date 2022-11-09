@@ -1,29 +1,36 @@
-import express from 'express';
-
-import { Server } from 'socket.io';
-
+const express = require('express');
 const app = express();
-
-let server = app.listen(3000);
-
-app.use(express.static('public'));
-
-/* Arreglo de topicos principales 
-    ej. Home/
-        Edif/
-*/
-
-let topics = [];
-
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
 const io = new Server(server);
 
-function getTopics(complete_topic){
+const fs = require('fs');
+const { Socket } = require('socket.io-client');
+
+
+class Topic{
+
+	constructor(topicName){
+
+		this.topicName = topicName;
+		this.subscribers = [];
+		this.subTopic = [];
+		this.savedMessage;
+		this.lastWillMessage = 'service disconnected';
+	};
     
-    let topics = complete_topic.split('/');
+	addSubscriber(idClient){
 
-    return topics;
-}
+        this.subTopic.forEach(element => {
+            element.addSubscriber(idClient);
+        });
+        
+        this.subscribers.push(idClient);	
+    };
+    popSubscriber(idClient){
 
+<<<<<<< HEAD
 function searchTopics(topics, arrayOfTopics){
 
     let arrayTopics = arrayOfTopics;
@@ -45,54 +52,83 @@ function searchTopics(topics, arrayOfTopics){
     }
 }
 //clase topico.
+=======
+        this.subTopic.forEach(element => {
+            element.popSubscriber(idClient);
+        });
+        
+        let deadIndex;
+>>>>>>> libreri
 
-class topic {
+        deadIndex = this.subscribers.indexOf(idClient);
+        if (deadIndex != -1) {
+            this.subscribers.pop(deadIndex);
+        };
+        
+    };
+    getLastWillMessage(){
+        return(this.lastWillMessage);
+    };
+    addSubTopic(subTopicName){
 
-    // Este constructor se aplica a las diferentes aplicaciones a las cuales se deban aplicar.
+        let subTopic = new Topic(subTopicName);
 
-    constructor(topic_name){
-        this.topic_name = topic_name;
-        this.suscribers = [];
-        this.subTopic = [];
-        this.SavedMessage;
-        this.lastWillMessage = "service disconnected.";
-    }
+        this.subTopic.push(subTopic);
+    };
+    emitPublish(msg, route, topic){
 
-    addSubscriber(ID_client){
-        this.suscribers.push(ID_client);
-    }
+        posicionRaiz = route.indexOf('/');
 
-    setSavedMessage(SavedMessage){
-        if(this.suscribers.length == 0){
-            this.SavedMessage = SavedMessage;
+        if (posicionRaiz!=0) {
+            actualRaiz = route.slice(0, posicionRaiz+1);
+            siguienteRaiz = route.slice(posicionRaiz+1);
+    
+            if (siguienteRaiz.length == 0) {
+                this.subscribers.forEach(element => {
+                    element.emit(msg);
+                });
+            }else{
+    
+                let indice = topicActual.subTopic.indexOf(actualRaiz);
+                
+                if (indice== -1) {
+                    topicActual.addSubTopic(actualRaiz);
+                    indice = topicActual.subTopic.indexOf(actualRaiz);
+                }
+                
+                suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
+            }
         }
 
-    }
 
-    writeLastWillMessage(){
-        return(lastWillMessage);
     }
+}
 
+<<<<<<< HEAD
     sendMessageToSubscribers(){
         return this.SavedMessage
     }
     //funcion que crea sub topicos.
+=======
+let topic = new Topic('/');
+>>>>>>> libreri
 
-    //Mode 1: Subscrpcion.
-    //Mode 0: Publicacion.
-    
-    createSubTopics(arrayOfTopics, ID_client, message, mode){
-
-        if(arrayOfTopics.length == 0 && mode == 0){
-
-            this.setSavedMessage(message);
-            return;
+function escribirLog(socket, ruta, evento){
+    fs.appendFile('./logs.txt', 'autor: ' + socket.conn.remoteAddress + ' Topico: '+ ruta + ' evento: ' + evento + '\n', (error)=>{
+        if (error){
+          throw error;
         }
+    })
+}
 
-        if(arrayOfTopics.length == 0){
-            return;
-        }
+function suscribe(topicActual,route,idCliente) {
 
+    let indexSlash = route.indexOf('/');
+    let rutaActual = route.slice(1, indexSlash+1);
+
+    // Se alcanzo la ruta maxima.
+
+<<<<<<< HEAD
         let boolean = false;
 
         let index;
@@ -127,42 +163,81 @@ class topic {
         } else {
             console.log("error");
         }
-        
+=======
+    if ( indexSlash == 0 && route.length == 1 ){
+
+        topicActual.addSubscriber(idCliente);
+
+        return;
     }
-}
 
-// Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
-io.sockets.on('connection', newConnection);
+    if ( route.length == 0 ) {
+        topicActual.addSubscriber(idCliente);
+
+        return;
+    }
+
+    if ( indexSlash == -1 && route.length > 0 ){
+        
+        let continuacionRuta = route.slice(indexSlash+1, route.length);
+>>>>>>> libreri
+        
+        topicActual.addSubTopic(rutaActual);
+
+        suscribe( topicActual.subTopic[0], continuacionRuta, idCliente );
+
+        return;
+    }
 
 
-function newConnection(socket){
 
-    // Escucha a la llamada Connect.
 
-    socket.on("CONNECT", (arg, callback) => {
-        callback("CONNACK");
-    });
-    
-    //Escucha a la llamada PUBLISH del cliente. 
-    // Recibe el directorio o topico, ej. Home/ ; Home/kitchen/termometer.
-    // message es la informacion que el cliente quiere publicar, ej. 79 grados, prender, apagar
-    // Callback es la respueta que da el broker con respecto a la peticion del cliente.
-    socket.on("PUBLISH", (topic_dir, message, callback) => {
 
-        let boolean = false;
+    // console.log(actualRaiz = route.slice(0, posicionRaiz+1));
+    // console.log(siguienteRaiz = route.slice(posicionRaiz+1))
+    // if (posicionRaiz!=0) {
+    //     actualRaiz = route.slice(0, posicionRaiz+1);
+    //     siguienteRaiz = route.slice(posicionRaiz+1);
 
+    //     if (siguienteRaiz.length == 0) {
+    //         topicActual.addSubscriber(idCliente);
+    //     }else{
+
+<<<<<<< HEAD
         let index;
 
         let arrayOfTopics = getTopics(topic_dir);
 
         for(let i = 0; i < topics.length; i++){
+=======
+    //         let indice = topicActual.subTopic.indexOf(actualRaiz);
+            
+    //         if (indice== -1) {
+    //             topicActual.addSubTopic(actualRaiz);
+    //             indice = topicActual.subTopic.indexOf(actualRaiz);
+    //         }
+    //         // console.log('suscrito')
+    //         suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
+    //     }
+    // }else{
+    //     // console.log('suscritor annadido');
+    //     // console.log(topicActual.topicName);
+    //     topicActual.addSubscriber(idCliente);
+    // }
+};
 
-            if( topics[i].topic_name == arrayOfTopics[0] ){
-                boolean = true;
-                index = i;
-            }
-        }
+// Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
+// io.sockets.on('connection', newConnection);
 
+>>>>>>> libreri
+
+io.on('connect', (socket) => {
+    console.log('conecte: ' + socket.id);
+    console.log(topic.topicName);
+  
+    escribirLog(socket, '/', 'connect')
+
+<<<<<<< HEAD
         if(boolean == true ){
 
             arrayOfTopics.shift();
@@ -171,9 +246,23 @@ function newConnection(socket){
         } else if (boolean == false){
 
             let newTopic = new topic(arrayOfTopics[0]);
+=======
+    // socket.on('PUBLISH', (msg, route) => {
+    //     topic.emitPublish(msg, route, topic);
+    // });
+    
+    // socket.on('SUBSCRIBE', (route) => {
+    //     suscribe(topic,route,socket.id);
+    // });
+    // socket.on('UNSUBSCRIBE', () => {
+    //     unsuscribe(topic,route,socket.id)
+    // });
+>>>>>>> libreri
 
-            topics.push(newTopic);
+    socket.on('PUBLISH', (msg, ruta, callback) => {
+        // topic.emitPublish(msg, route, topic);
 
+<<<<<<< HEAD
             for (let i = 0; i < topics.length; i++) {
                 
                 if(topics[i].topic_name == arrayOfTopics[0]){
@@ -188,20 +277,33 @@ function newConnection(socket){
 
         }
         console.log(topics);
+=======
+
+        escribirLog(socket, ruta, 'PUBLISH')
+        callback("PUBLICASTE CON EXITO");
+>>>>>>> libreri
     });
 
-    socket.on("SUBSCRIBE", (topic, callback) => {
+    socket.on('SUBSCRIBE', (msg, ruta, callback) => {
+        // suscribe(topic,route,socket.id);
 
-        callback("SUBACK");
+        suscribe(topic,ruta,socket.id);
+
+        console.log('suscritor de ' + topic.topicName)
+
+        escribirLog(socket, ruta, 'SUBSCRIBE');
+        callback("SUBSCRIBE CON EXITO");
     });
 
-    socket.on("UNSUBSCRIBE", (arg, callback) => {
-        console.log(arg);
-        callback("UNSUBACK");
-    });
+    socket.on('UNSUBSCRIBE', (msg, ruta, callback) => {
+        // unsuscribe(topic,route,socket.id)
 
-    socket.on("DISCONNECT", (callback) => {
-        callback("DISCONNECTED.");
-        socket.disconnect();
+        escribirLog(socket, ruta, 'UNSUBSCRIBE')
+        callback("UNSUBSCRIBE CON EXITO");
     });
-}
+    
+});
+
+server.listen(3000, () => {
+    console.log('listening on *:3000');
+  });
