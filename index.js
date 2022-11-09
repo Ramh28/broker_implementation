@@ -142,7 +142,7 @@ function suscribe(topicActual,route,idCliente) {
     }
 
     // si nos quedamos sin topicos y la ruta sigue
-    if ( indexSlash == -1 && route.length > 0 ){
+    if ( indexSlash == -1 && route.slice(indexSlash+1, route.length).length > 0 ){
 
         topicActual.addSubTopic(route.slice(0, indexSlash+1));
         console.log('cree el subtopico nuevo: '+ topicActual.subTopic[0].topicName)
@@ -152,7 +152,7 @@ function suscribe(topicActual,route,idCliente) {
     }
 
     // Si el slash es mayor a 0 y la ruta tambien
-    if ( indexSlash > 0 && route.length > 0 ){
+    if ( indexSlash > 0 && route.slice(indexSlash+1, route.length).length > 0 ){
         console.log(indexSlash);
         console.log(" Me muevo de directorio " + topicActual.topicName);
 
