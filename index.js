@@ -26,7 +26,11 @@ class Topic{
             element.addSubscriber(idClient);
         });
         
-        this.subscribers.push(idClient);	
+        this.subscribers.push(idClient);
+        
+        if(this.savedMessage != undefined ){
+            io.to(idClient).emit("xsss", this.savedMessage);
+        }
     };
     popSubscriber(idClient){
 
@@ -129,11 +133,7 @@ function suscribe(topicActual,route,idCliente) {
 
         //Define la ruta faltante por alcanzar.
          siguienteRaiz = route.slice(posicionRaiz+1);
-
-        //Impresion de la suerte. 
-
-        console.log(siguienteRaiz);
-        console.log(actualRaiz);
+ 
 
             let index; 
 
@@ -164,13 +164,12 @@ function suscribe(topicActual,route,idCliente) {
                     const element = topicActual.subTopic[i];
                     
                     if( element.topicName == actualRaiz){ 
-                        console.log("Entre aca"); // Encontro el subtopico al cual se quiere subscribir.
+                         // Encontro el subtopico al cual se quiere subscribir.
                         index = i;
                     }
                     
                 }
 
-                console.log(index); 
 
                 if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
 
@@ -200,27 +199,30 @@ function suscribe(topicActual,route,idCliente) {
      }
 };
 
-function publica(topicActual,route,message) {
+function publish (topicActual ,route, message) {
 
     let posicionRaiz = route.indexOf('/');
   
     if( posicionRaiz == 0 && route.length == 1){
-  
-      topicActual.subscribers.forEach(element => {
-        io.to(element).emit('xsss', 'mensaje')
-      });
+        
+        console.log(topicActual.subscribers.length);
+
+        topicActual.subscribers.forEach(element => {
+            io.to(element).emit("xsss", message)
+        });
     }
   
       //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
   
     if( posicionRaiz == -1 && route.length == 0){
-  
+
       if (topicActual.subscribers.length == 0){
         topicActual.savedMessage = message;
+        return;
       }
   
       topicActual.subscribers.forEach(element => {
-        io.to(element).emit('xsss', 'mensaje')
+        io.to(element).emit("xsss", message)
       });
     }
   
@@ -244,11 +246,6 @@ function publica(topicActual,route,message) {
         //Define la ruta faltante por alcanzar.
          siguienteRaiz = route.slice(posicionRaiz+1);
   
-        //Impresion de la suerte. 
-  
-        console.log(siguienteRaiz);
-        console.log(actualRaiz);
-  
             let index; 
   
             //Si el arreglo de sub topicos esta vacio
@@ -268,7 +265,7 @@ function publica(topicActual,route,message) {
                 }
                 
                 //Se manda a subscribir en el subtopico.
-                publica(topicActual.subTopic[index], siguienteRaiz, message);
+                publish(topicActual.subTopic[index], siguienteRaiz, message);
   
             } else { // De otra forma.
   
@@ -278,13 +275,11 @@ function publica(topicActual,route,message) {
                     const element = topicActual.subTopic[i];
                     
                     if( element.topicName == actualRaiz){ 
-                        console.log("Entre aca"); // Encontro el subtopico al cual se quiere subscribir.
+                        // Encontro el subtopico al cual se quiere subscribir.
                         index = i;
                     }
                     
                 }
-  
-                console.log(index); 
   
                 if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
   
@@ -306,7 +301,7 @@ function publica(topicActual,route,message) {
                 }
   
                 // Se subscribe all subtopico.
-                publica(topicActual.subTopic[index], siguienteRaiz, message);
+                publish(topicActual.subTopic[index], siguienteRaiz, message);
   
             }
      }
@@ -317,25 +312,10 @@ function publica(topicActual,route,message) {
 
 
 io.on('connect', (socket) => {
-    console.log('conecte: ' + socket.id);
-    console.log(topic.topicName);
-  
-    escribirLog(socket, '/', 'connect')
-
-    // socket.on('PUBLISH', (msg, route) => {
-    //     topic.emitPublish(msg, route, topic);
-    // });
-    
-    // socket.on('SUBSCRIBE', (route) => {
-    //     suscribe(topic,route,socket.id);
-    // });
-    // socket.on('UNSUBSCRIBE', () => {
-    //     unsuscribe(topic,route,socket.id)
-    // });
 
     socket.on('PUBLISH', (msg, ruta, callback) => {
-        // topic.emitPublish(msg, route, topic);
-
+        
+        publish(topic, ruta, msg);
 
         escribirLog(socket, ruta, 'PUBLISH')
         callback("PUBLICASTE CON EXITO");
@@ -344,9 +324,7 @@ io.on('connect', (socket) => {
     socket.on('SUBSCRIBE', (msg, ruta, callback) => {
         // suscribe(topic,route,socket.id);
 
-        suscribe(topic,ruta,socket.id);
-
-        console.log('suscritor de ', topic.subTopic[0].subTopic[0].subTopic);
+        suscribe(topic, ruta, socket.id);
 
         escribirLog(socket, ruta, 'SUBSCRIBE');
         callback("SUBSCRIBE CON EXITO");
