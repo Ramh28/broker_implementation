@@ -75,3 +75,8 @@ autor: ::ffff:127.0.0.1 Topico: home/room/tv/ evento: UNSUBSCRIBE
 >>>>>>> Stashed changes
 autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
 autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE
+autor: ::ffff:127.0.0.1 Topico: /home/room/tv/ evento: SUBSCRIBE

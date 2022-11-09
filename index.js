@@ -90,35 +90,24 @@ function escribirLog(socket, ruta, evento){
 
 function suscribe(topicActual,route,idCliente) {
 
-    console.log(topicActual.topicName + " estoy adentro ");
-
     let indexSlash = route.indexOf('/');
-    // let siguiente = route.slice(indexSlash+1, route.length);
-
-    // console.log('el siguiente es: ' + siguiente);
-
-    // console.log(indexSlash);
-    // console.log('soy el length '+route.length);
-    // console.log(route);
-    // console.log(route.slice(0, indexSlash+1));
 
     // Si estamos en raiz y la ruta marca la raiz
     if ( indexSlash == 0 && route.length == 1 ){
 
         topicActual.addSubscriber(idCliente);
-        console.log(" guardare en raiz " + topicActual.topicName);
         return;
     }
 
     // si estamos en Raiz y la ruta continua
-    if (indexSlash == 0 && route.length > 0){
-        console.log(" paso la raix raiz " + topicActual.topicName);
-        console.log(route.slice(indexSlash+1, route.length))
+    if (indexSlash == 0 && route.slice(indexSlash+1, route.length) > 0){
+
+        // busco el siguiente "/"
+        let directorio =  route.slice(1, route.length);
+        let auxSlash = directorio.indexOf('/');
 
         topicActual.subTopic.forEach(element => {
-            console.log('entre en foreach')
-            if( element.topicName == route.slice(0, indexSlash+1) ){
-                console.log('entre en foreach condicional')
+            if( element.topicName == route.slice(1, element.topicName.length+1) ){
 
                 suscribe(element, route.slice(indexSlash+1, route.length), idCliente)
                 return;
@@ -126,8 +115,7 @@ function suscribe(topicActual,route,idCliente) {
         });
 
         // si no consegui el topico que quiero entonces creo uno de ultimo y continuo
-        topicActual.addSubTopic( route.slice(indexSlash+1, route.length) );
-        console.log('cree el subtopico nuevo: '+ topicActual.subTopic[topicActual.subTopic.length-1].topicName)
+        topicActual.addSubTopic( route.slice(1, auxSlash+1) );
 
         suscribe( topicActual.subTopic[topicActual.subTopic.length-1], route.slice(indexSlash+1, route.length), idCliente );
         return;
@@ -136,8 +124,6 @@ function suscribe(topicActual,route,idCliente) {
     // si alcanzamos fin de ruta
     if ( route.slice(indexSlash+1, route.length).length == 0 ) {
         topicActual.addSubscriber(idCliente);
-
-        console.log(" guardare en un topico " + topicActual.topicName);
         return;
     }
 
@@ -145,31 +131,25 @@ function suscribe(topicActual,route,idCliente) {
     if ( indexSlash == -1 && route.slice(indexSlash+1, route.length).length > 0 ){
 
         topicActual.addSubTopic(route.slice(0, indexSlash+1));
-        console.log('cree el subtopico nuevo: '+ topicActual.subTopic[0].topicName)
         suscribe( topicActual.subTopic[0], route.slice(indexSlash+1, route.length), idCliente );
 
         return;
     }
 
-    // Si el slash es mayor a 0 y la ruta tambien
+    // Si el Slash es mayor a 0 y la ruta tambien
     if ( indexSlash > 0 && route.slice(indexSlash+1, route.length).length > 0 ){
-        console.log(indexSlash);
-        console.log(" Me muevo de directorio " + topicActual.topicName);
 
         // si no tengo mas topicos creo uno y continuo
         if (topicActual.subTopic.length == 0){
-            topicActual.addSubTopic(route.slice(indexSlash+1, route.length));
-            console.log('cree el subtopico nuevo: '+ topicActual.subTopic[0].topicName)
-
+            topicActual.addSubTopic(route.slice(0, indexSlash+1));
+            console.log('fin')
             suscribe( topicActual.subTopic[0], route.slice(indexSlash+1, route.length), idCliente );
             return;
         }
     
         // si tengo topicos los reviso uno a uno hasta conseguir el que es
         topicActual.subTopic.forEach(element => {
-            console.log('entre en foreach')
             if( element.topicName == route.slice(0, indexSlash+1) ){
-                console.log('entre en foreach condicional')
 
                 suscribe(element, route.slice(indexSlash+1, route.length), idCliente)
                 return;
@@ -177,8 +157,7 @@ function suscribe(topicActual,route,idCliente) {
         });
 
         // si no consegui el topico que quiero entonces creo uno de ultimo y continuo
-        topicActual.addSubTopic( route.slice(indexSlash+1, route.length) );
-        console.log('cree el subtopico nuevo: '+ topicActual.subTopic[topicActual.subTopic.length-1].topicName)
+        topicActual.addSubTopic( route.slice(0, indexSlash+1) );
 
         suscribe( topicActual.subTopic[topicActual.subTopic.length-1], route.slice(indexSlash+1, route.length), idCliente );
         return;
