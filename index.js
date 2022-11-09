@@ -29,6 +29,8 @@ class Topic{
         this.subscribers.push(idClient);
         
         if(this.savedMessage != undefined ){
+            console.log("Entre aqui")
+            console.log(this.subscribers);
             io.to(idClient).emit("xsss", this.savedMessage);
         }
     };
