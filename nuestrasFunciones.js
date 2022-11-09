@@ -1,6 +1,4 @@
-const { io } = require("socket.io-client");
-
-function suscribe(topicActual,route,idCliente) {
+function publica(topicActual,route,message) {
 
   let posicionRaiz = route.indexOf('/');
 
@@ -14,6 +12,10 @@ function suscribe(topicActual,route,idCliente) {
     //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
 
   if( posicionRaiz == -1 && route.length == 0){
+
+    if (topicActual.subscribers.length == 0){
+      topicActual.savedMessage = message;
+    }
 
     topicActual.subscribers.forEach(element => {
       io.to(element).emit('xsss', 'mensaje')
@@ -64,7 +66,7 @@ function suscribe(topicActual,route,idCliente) {
               }
               
               //Se manda a subscribir en el subtopico.
-              suscribe(topicActual.subTopic[index], siguienteRaiz, idCliente);
+              publica(topicActual.subTopic[index], siguienteRaiz, message);
 
           } else { // De otra forma.
 
@@ -102,7 +104,7 @@ function suscribe(topicActual,route,idCliente) {
               }
 
               // Se subscribe all subtopico.
-              suscribe(topicActual.subTopic[index], siguienteRaiz, idCliente);
+              publica(topicActual.subTopic[index], siguienteRaiz, message);
 
           }
    }
