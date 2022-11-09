@@ -16,9 +16,6 @@ socket.emit("PUBLISH", msg, ruta, (response) => {
 socket.emit("SUBSCRIBE", msg, ruta, (response) => {
   console.log(response); // "got it"
 });
-socket.emit("SUBSCRIBE", msg, ruta2, (response) => {
-  console.log(response); // "got it"
-});
 socket.emit("UNSUBSCRIBE", msg, ruta, (response) => {
   console.log(response); // "got it"
 });
