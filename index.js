@@ -139,13 +139,13 @@ function suscribe(topicActual,route,idCliente) {
     // Si el Slash es mayor a 0 y la ruta tambien
     if ( indexSlash > 0 && route.slice(indexSlash+1, route.length).length > 0 ){
 
-        // si no tengo mas topicos creo uno y continuo
-        if (topicActual.subTopic.length == 0){
-            topicActual.addSubTopic(route.slice(0, indexSlash+1));
-            console.log('fin')
-            suscribe( topicActual.subTopic[0], route.slice(indexSlash+1, route.length), idCliente );
-            return;
-        }
+        // si no tengo mas topicos creo uno y continuo ----- Innecesario ya que el each y el agregar al final solapan esto
+        // if (topicActual.subTopic.length == 0){
+        //     topicActual.addSubTopic(route.slice(0, indexSlash+1));
+        //     console.log('fin')
+        //     suscribe( topicActual.subTopic[0], route.slice(indexSlash+1, route.length), idCliente );
+        //     return;
+        // }
     
         // si tengo topicos los reviso uno a uno hasta conseguir el que es
         topicActual.subTopic.forEach(element => {
