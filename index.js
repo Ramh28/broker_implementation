@@ -315,6 +315,9 @@ function publica(topicActual,route,message) {
 // Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
 // io.sockets.on('connection', newConnection);
 
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/cliente.html');
+  });
 
 io.on('connect', (socket) => {
     console.log('conecte: ' + socket.id);
