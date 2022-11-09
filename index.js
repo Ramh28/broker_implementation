@@ -28,6 +28,7 @@ class Topic{
         
         this.subscribers.push(idClient);	
     };
+
     popSubscriber(idClient){
 
         this.subTopic.forEach(element => {
@@ -42,15 +43,18 @@ class Topic{
         };
         
     };
+    
     getLastWillMessage(){
         return(this.lastWillMessage);
     };
+
     addSubTopic(subTopicName){
 
         let subTopic = new Topic(subTopicName);
 
         this.subTopic.push(subTopic);
     };
+
     emitPublish(msg, route, topic){
 
         posicionRaiz = route.indexOf('/');
@@ -130,11 +134,6 @@ function suscribe(topicActual,route,idCliente) {
         //Define la ruta faltante por alcanzar.
          siguienteRaiz = route.slice(posicionRaiz+1);
 
-        //Impresion de la suerte. 
-
-        console.log(siguienteRaiz);
-        console.log(actualRaiz);
-
             let index; 
 
             //Si el arreglo de sub topicos esta vacio
@@ -164,13 +163,11 @@ function suscribe(topicActual,route,idCliente) {
                     const element = topicActual.subTopic[i];
                     
                     if( element.topicName == actualRaiz){ 
-                        console.log("Entre aca"); // Encontro el subtopico al cual se quiere subscribir.
+                         // Encontro el subtopico al cual se quiere subscribir.
                         index = i;
                     }
                     
                 }
-
-                console.log(index); 
 
                 if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
 
@@ -195,8 +192,6 @@ function suscribe(topicActual,route,idCliente) {
                 suscribe(topicActual.subTopic[index], siguienteRaiz, idCliente);
 
             }
-         // console.log('suscritor annadido');
-         // console.log(topicActual.topicName);
      }
 };
 
@@ -205,25 +200,10 @@ function suscribe(topicActual,route,idCliente) {
 
 
 io.on('connect', (socket) => {
-    console.log('conecte: ' + socket.id);
-    console.log(topic.topicName);
   
-    escribirLog(socket, '/', 'connect')
-
-    // socket.on('PUBLISH', (msg, route) => {
-    //     topic.emitPublish(msg, route, topic);
-    // });
-    
-    // socket.on('SUBSCRIBE', (route) => {
-    //     suscribe(topic,route,socket.id);
-    // });
-    // socket.on('UNSUBSCRIBE', () => {
-    //     unsuscribe(topic,route,socket.id)
-    // });
+    escribirLog(socket, '/', 'connect');
 
     socket.on('PUBLISH', (msg, ruta, callback) => {
-        // topic.emitPublish(msg, route, topic);
-
 
         escribirLog(socket, ruta, 'PUBLISH')
         callback("PUBLICASTE CON EXITO");
@@ -233,13 +213,6 @@ io.on('connect', (socket) => {
         // suscribe(topic,route,socket.id);
 
         suscribe(topic,ruta,socket.id);
-
-        console.log(topic);
-        console.log("--------------------------------------");
-        console.log(topic.subTopic[0]);
-        console.log("--------------------------------------");
-        console.log(topic.subTopic[0].subTopic[0]);
-        console.log("--------------------------------------");
 
         escribirLog(socket, ruta, 'SUBSCRIBE');
         callback("SUBSCRIBE CON EXITO");
