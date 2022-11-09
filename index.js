@@ -201,8 +201,15 @@ io.on('connect', (socket) => {
     socket.on('SUBSCRIBE', (msg, ruta, callback) => {
 
         suscribe(topic,ruta,socket.id);
-
         escribirLog(socket, ruta, 'SUBSCRIBE');
+
+        console.log(topic);
+        console.log("------------------------------");
+        console.log(topic.subTopic[0]);
+        console.log("------------------------------");
+        console.log(topic.subTopic[0].subTopic[0]);
+        console.log("------------------------------");
+
         callback("SUBSCRIBE CON EXITO");
     });
 
