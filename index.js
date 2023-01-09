@@ -11,9 +11,10 @@ const { Socket } = require('socket.io-client');
 
 class Topic{
 
-	constructor(topicName){
+	constructor(topicName,type){
 
 		this.topicName = topicName;
+        this.type = type;
 		this.subscribers = [];
 		this.subTopic = [];
 		this.savedMessage;
@@ -29,7 +30,7 @@ class Topic{
         this.subscribers.push(idClient);
         
         if(this.savedMessage != undefined ){
-            console.log("Entre aqui")
+            console.log("Entre aquí")
             console.log(this.subscribers);
             io.to(idClient).emit("xsss", this.savedMessage);
         }
@@ -176,7 +177,7 @@ function suscribe(topicActual,route,idCliente) {
                 if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
 
                     // Crea el subtopico nuevo.
-                    topicActual.addSubTopic(actualRaiz);
+                    topicActual.addSubTopic(actualRaiz,'Constructor');
 
                     //Busca el index del subtopico.
 
@@ -286,7 +287,7 @@ function publish (topicActual ,route, message) {
                 if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
   
                     // Crea el subtopico nuevo.
-                    topicActual.addSubTopic(actualRaiz);
+                    topicActual.addSubTopic(actualRaiz,'Constructor');
   
                     //Busca el index del subtopico.
   
