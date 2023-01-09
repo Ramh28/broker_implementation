@@ -127,7 +127,7 @@ function suscribe(topicActual,route,idCliente) {
     }
 
 
-    // Cuando la ruta esta clara, entra en el buble principal.
+    // Cuando la ruta esta clara, entra en el bucle principal.
 
     if (posicionRaiz !=0 ) {
 
@@ -197,118 +197,69 @@ function suscribe(topicActual,route,idCliente) {
                 suscribe(topicActual.subTopic[index], siguienteRaiz, idCliente);
 
             }
-         // console.log('suscritor annadido');
+         // console.log('suscritor añadido');
          // console.log(topicActual.topicName);
      }
 };
 
-function publish (topicActual ,route, message) {
-
+function publish (topicActual, route, message){
+    
     let posicionRaiz = route.indexOf('/');
-  
-    if( posicionRaiz == 0 && route.length == 1){
-        
-        console.log(topicActual.subscribers.length);
-
-        topicActual.subscribers.forEach(element => {
-            io.to(element).emit("xsss", message)
-        });
-    }
-  
-      //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
-  
-    if( posicionRaiz == -1 && route.length == 0){
-
+    // Si la ruta es /, significa que se envia un mensaje a Raiz o a la ruta actual, segun recursividad.
+    if (posicionRaiz == 0 && route.length == 1) {
+      // Si no hay subscriptores se guarda el mensaje y retorna
       if (topicActual.subscribers.length == 0){
         topicActual.savedMessage = message;
         return;
+      } else {
+        // Si existen subscriptores, se envia el mensaje y retorna.
+        topicActual.subscribers.forEach(element => {
+          io.to(element).emit("xsss", message)
+        });
+        return;
       }
+    }
   
+    //Si no se envia un mensaje a raiz, o no hemos llegado a la ruta.
+      //Si la ruta tiene un / al principio, lo quita y procede a almacenar los topicos.
+    if(posicionRaiz == 0 && route.length > 1){
+      route = route.slice(posicionRaiz+1);
+      posicionRaiz = route.indexOf('/');
+    }
+  
+    //Una vez la ruta corregida, procedemos a recorrerla.
+    let actualRaiz = route.slice(0, posicionRaiz +1); //Define ruta actual para el nuevo subtopico.
+    let siguienteRaiz = route.slice(posicionRaiz+1); //Define ruta por alcanzar.
+  
+    let index;
+    // Busca el index del topico.
+    for (let i = 0; i < topicActual.subTopic.length; i++) {
+      const element = topicActual.subTopic[i];
+      if (element.topicName == actualRaiz) {
+        index = i;
+      }
+    }
+  
+    // Si no lo encuentra crea el topico.
+    if (index == undefined) {
+      topicActual.addSubtopic(actualRaiz,'Constructor');
+      index == topicActual.subTopic.length -1;
+    }
+  
+    //Envia el mensaje a todos los subscriptores del topico donde nos encontramos.
+    // Si no hay subscriptores se guarda el mensaje y retorna
+    if (topicActual.subscribers.length == 0){
+      topicActual.savedMessage = message;
+    } else {
+      // Si existen subscriptores, se envia el mensaje y retorna.
       topicActual.subscribers.forEach(element => {
         io.to(element).emit("xsss", message)
       });
     }
   
-    //Si la ruta tiene un / al principio, lo quita y procede a almacenar los topicos.
+    publish(topicActual.subTopic[index],siguienteRaiz,message);
   
-    if(posicionRaiz == 0 && route.length > 1){
-  
-        route = route.slice(posicionRaiz+1);
-  
-        posicionRaiz = route.indexOf('/');
-    }
-  
-  
-    // Cuando la ruta esta clara, entra en el buble principal.
-  
-    if (posicionRaiz !=0 ) {
-  
-        // Define la ruta actual del nuevo topico.
-         actualRaiz = route.slice(0, posicionRaiz+1);
-  
-        //Define la ruta faltante por alcanzar.
-         siguienteRaiz = route.slice(posicionRaiz+1);
-  
-            let index; 
-  
-            //Si el arreglo de sub topicos esta vacio
-            if(topicActual.subTopic.length == 0){
-  
-                //Se crea el subtopico.
-                topicActual.addSubTopic(actualRaiz);
-                
-                //Se busca el index del subtopico.
-                for (let i = 0; i < topicActual.subTopic.length; i++) {
-                    const element = topicActual.subTopic[i];
-                    
-                    if( element.topicName == actualRaiz){
-                        index = i;
-                    }
-                    
-                }
-                
-                //Se manda a subscribir en el subtopico.
-                publish(topicActual.subTopic[index], siguienteRaiz, message);
-  
-            } else { // De otra forma.
-  
-                //Revisa el arreglo de subtopicos para buscar el subtopico al cual se quiere subscribir.
-                for (let i = 0; i < topicActual.subTopic.length; i++) {
-                    
-                    const element = topicActual.subTopic[i];
-                    
-                    if( element.topicName == actualRaiz){ 
-                        // Encontro el subtopico al cual se quiere subscribir.
-                        index = i;
-                    }
-                    
-                }
-  
-                if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
-  
-                    // Crea el subtopico nuevo.
-                    topicActual.addSubTopic(actualRaiz,'Constructor');
-  
-                    //Busca el index del subtopico.
-  
-                    for (let i = 0; i < topicActual.subTopic.length; i++) {
-                    
-                        const element = topicActual.subTopic[i];
-                        
-                        if( element.topicName == actualRaiz){
-                            index = i;
-                        }
-                        
-                    }
-  
-                }
-  
-                // Se subscribe all subtopico.
-                publish(topicActual.subTopic[index], siguienteRaiz, message);
-  
-            }
-     }
-};
+  }
   
 // Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
 // io.sockets.on('connection', newConnection);
