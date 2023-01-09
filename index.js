@@ -26,7 +26,13 @@ class Topic{
             element.addSubscriber(idClient);
         });
         
-        this.subscribers.push(idClient);	
+        this.subscribers.push(idClient);
+        
+        if(this.savedMessage != undefined ){
+            console.log("Entre aqui")
+            console.log(this.subscribers);
+            io.to(idClient).emit("xsss", this.savedMessage);
+        }
     };
     popSubscriber(idClient){
 
@@ -87,60 +93,233 @@ function escribirLog(socket, ruta, evento){
         if (error){
           throw error;
         }
-        console.log(evento);
     })
 }
 
 function suscribe(topicActual,route,idCliente) {
-    posicionRaiz = route.indexOf('/');
 
-    if (posicionRaiz!=0) {
-        actualRaiz = route.slice(0, posicionRaiz+1);
-        siguienteRaiz = route.slice(posicionRaiz+1);
+    let posicionRaiz = route.indexOf('/');
 
-        if (siguienteRaiz.length == 0) {
-            topicActual.addSubscriber(idCliente);
-        }else{
+    if( posicionRaiz == 0 && route.length == 1){
 
-            let indice = topicActual.subTopic.indexOf(actualRaiz);
-            
-            if (indice== -1) {
-                topicActual.addSubTopic(actualRaiz);
-                indice = topicActual.subTopic.indexOf(actualRaiz);
-            }
-            
-            suscribe(topicActual.subTopic[indice],siguienteRaiz,idCliente);
-        }
-    }else{
-        topicActual.addSubscriber(idCliente);
+        this.subTopic.forEach( element => {
+            element.addSubscriber(idCliente);
+        })
     }
+
+      //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
+
+    if( posicionRaiz == -1 && route.length == 0){
+
+        topicActual.addSubscriber(idCliente);
+        return;
+
+    }
+
+    //Si la ruta tiene un / al principio, lo quita y procede a almacenar los topicos.
+
+    if(posicionRaiz == 0 && route.length > 1){
+
+        route = route.slice(posicionRaiz+1);
+
+        posicionRaiz = route.indexOf('/');
+    }
+
+
+    // Cuando la ruta esta clara, entra en el buble principal.
+
+    if (posicionRaiz !=0 ) {
+
+        // Define la ruta actual del nuevo topico.
+         actualRaiz = route.slice(0, posicionRaiz+1);
+
+        //Define la ruta faltante por alcanzar.
+         siguienteRaiz = route.slice(posicionRaiz+1);
+ 
+
+            let index; 
+
+            //Si el arreglo de sub topicos esta vacio
+            if(topicActual.subTopic.length == 0){
+
+                //Se crea el subtopico.
+                topicActual.addSubTopic(actualRaiz);
+                
+                //Se busca el index del subtopico.
+                for (let i = 0; i < topicActual.subTopic.length; i++) {
+                    const element = topicActual.subTopic[i];
+                    
+                    if( element.topicName == actualRaiz){
+                        index = i;
+                    }
+                    
+                }
+                
+                //Se manda a subscribir en el subtopico.
+                suscribe(topicActual.subTopic[index], siguienteRaiz, idCliente);
+
+            } else { // De otra forma.
+
+                //Revisa el arreglo de subtopicos para buscar el subtopico al cual se quiere subscribir.
+                for (let i = 0; i < topicActual.subTopic.length; i++) {
+                    
+                    const element = topicActual.subTopic[i];
+                    
+                    if( element.topicName == actualRaiz){ 
+                         // Encontro el subtopico al cual se quiere subscribir.
+                        index = i;
+                    }
+                    
+                }
+
+
+                if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
+
+                    // Crea el subtopico nuevo.
+                    topicActual.addSubTopic(actualRaiz);
+
+                    //Busca el index del subtopico.
+
+                    for (let i = 0; i < topicActual.subTopic.length; i++) {
+                    
+                        const element = topicActual.subTopic[i];
+                        
+                        if( element.topicName == actualRaiz){
+                            index = i;
+                        }
+                        
+                    }
+
+                }
+
+                // Se subscribe all subtopico.
+                suscribe(topicActual.subTopic[index], siguienteRaiz, idCliente);
+
+            }
+         // console.log('suscritor annadido');
+         // console.log(topicActual.topicName);
+     }
 };
 
+function publish (topicActual ,route, message) {
+
+    let posicionRaiz = route.indexOf('/');
+  
+    if( posicionRaiz == 0 && route.length == 1){
+        
+        console.log(topicActual.subscribers.length);
+
+        topicActual.subscribers.forEach(element => {
+            io.to(element).emit("xsss", message)
+        });
+    }
+  
+      //Si la posicionRaiz es -1 y la route es 0, entonces es el ultimo topico.
+  
+    if( posicionRaiz == -1 && route.length == 0){
+
+      if (topicActual.subscribers.length == 0){
+        topicActual.savedMessage = message;
+        return;
+      }
+  
+      topicActual.subscribers.forEach(element => {
+        io.to(element).emit("xsss", message)
+      });
+    }
+  
+    //Si la ruta tiene un / al principio, lo quita y procede a almacenar los topicos.
+  
+    if(posicionRaiz == 0 && route.length > 1){
+  
+        route = route.slice(posicionRaiz+1);
+  
+        posicionRaiz = route.indexOf('/');
+    }
+  
+  
+    // Cuando la ruta esta clara, entra en el buble principal.
+  
+    if (posicionRaiz !=0 ) {
+  
+        // Define la ruta actual del nuevo topico.
+         actualRaiz = route.slice(0, posicionRaiz+1);
+  
+        //Define la ruta faltante por alcanzar.
+         siguienteRaiz = route.slice(posicionRaiz+1);
+  
+            let index; 
+  
+            //Si el arreglo de sub topicos esta vacio
+            if(topicActual.subTopic.length == 0){
+  
+                //Se crea el subtopico.
+                topicActual.addSubTopic(actualRaiz);
+                
+                //Se busca el index del subtopico.
+                for (let i = 0; i < topicActual.subTopic.length; i++) {
+                    const element = topicActual.subTopic[i];
+                    
+                    if( element.topicName == actualRaiz){
+                        index = i;
+                    }
+                    
+                }
+                
+                //Se manda a subscribir en el subtopico.
+                publish(topicActual.subTopic[index], siguienteRaiz, message);
+  
+            } else { // De otra forma.
+  
+                //Revisa el arreglo de subtopicos para buscar el subtopico al cual se quiere subscribir.
+                for (let i = 0; i < topicActual.subTopic.length; i++) {
+                    
+                    const element = topicActual.subTopic[i];
+                    
+                    if( element.topicName == actualRaiz){ 
+                        // Encontro el subtopico al cual se quiere subscribir.
+                        index = i;
+                    }
+                    
+                }
+  
+                if( index == undefined){ //Si index es undefined es que el topico no esta creado, entonces...
+  
+                    // Crea el subtopico nuevo.
+                    topicActual.addSubTopic(actualRaiz);
+  
+                    //Busca el index del subtopico.
+  
+                    for (let i = 0; i < topicActual.subTopic.length; i++) {
+                    
+                        const element = topicActual.subTopic[i];
+                        
+                        if( element.topicName == actualRaiz){
+                            index = i;
+                        }
+                        
+                    }
+  
+                }
+  
+                // Se subscribe all subtopico.
+                publish(topicActual.subTopic[index], siguienteRaiz, message);
+  
+            }
+     }
+};
+  
 // Comienza el servidor y ejecuta una funcion cuando haya una nueva conexión.
 // io.sockets.on('connection', newConnection);
-
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/cliente.html');
+});
 
 io.on('connect', (socket) => {
-    console.log('conecte: ' + socket.id);
-  
-    escribirLog(socket, '/', 'connect')
-
-    // socket.on('PUBLISH', (msg, route) => {
-    //     topic.emitPublish(msg, route, topic);
-    // });
-    
-    // socket.on('SUBSCRIBE', (route) => {
-    //     suscribe(topic,route,socket.id);
-    // });
-    // socket.on('UNSUBSCRIBE', () => {
-    //     unsuscribe(topic,route,socket.id)
-    // });
 
     socket.on('PUBLISH', (msg, ruta, callback) => {
-        // topic.emitPublish(msg, route, topic);
-        console.log('publicando ando');
-        console.log(msg);
-
+        
+        publish(topic, ruta, msg);
 
         escribirLog(socket, ruta, 'PUBLISH')
         callback("PUBLICASTE CON EXITO");
@@ -148,15 +327,15 @@ io.on('connect', (socket) => {
 
     socket.on('SUBSCRIBE', (msg, ruta, callback) => {
         // suscribe(topic,route,socket.id);
-        console.log('publicando ando');
 
+        suscribe(topic, ruta, socket.id);
 
         escribirLog(socket, ruta, 'SUBSCRIBE');
         callback("SUBSCRIBE CON EXITO");
     });
+
     socket.on('UNSUBSCRIBE', (msg, ruta, callback) => {
         // unsuscribe(topic,route,socket.id)
-        console.log('publicando ando');
 
         escribirLog(socket, ruta, 'UNSUBSCRIBE')
         callback("UNSUBSCRIBE CON EXITO");

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cliente prueba</title>
+</head>
+<body>
+
+  <div id="publicarMensajes">
+    <ul id="publicaciones">
+    </ul>
+    <form id="formPublicar" action="">
+      <input id="inputPublicar" autocomplete="off" /><button>Send</button>
+    </form>
+  </div>
+
+  <div id="mensajesRecibidos">
+    <ul id="messages">
+    </ul>
+  </div>
+
+  <div id="suscribirseTopicos">
+    <ul id="suscripciones">
+    </ul>
+    <form id="formSuscribir" action="">
+      <input id="inputSuscribir" autocomplete="off" /><button>Send</button>
+    </form>
+  </div>
+
+  <!-- ------------------------------ -->
+
+  <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      var formPublicar = document.getElementById('formPublicar');
+      var inputPublicar = document.getElementById('inputPublicar');
+
+      var formSuscribir = document.getElementById('formSuscribir');
+      var inputSuscribir = document.getElementById('inputSuscribir');
+
+      formPublicar.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (inputPublicar.value) {
+          socket.emit('PUBLISH', "Temperatura 79" ,inputPublicar.value, (response) =>{
+            console.log(response) //Got it
+          });
+          var elemento = document.createElement('li');
+          elemento.textContent = inputPublicar.value;
+          document.getElementById('publicaciones').appendChild(elemento);
+          inputPublicar.value = '';
+        }
+      });
+
+      formSuscribir.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (inputSuscribir.value) {
+          socket.emit('SUBSCRIBE', inputSuscribir.value, inputSuscribir.value, (response) =>{
+            console.log(response) //Got it
+          });
+          var miSuscripciones = document.createElement('li');
+          miSuscripciones.textContent = inputSuscribir.value;
+          document.getElementById('suscripciones').appendChild(miSuscripciones);
+          inputSuscribir.value = '';
+        }
+      });
+
+      socket.on('xsss', function(msg) {
+        var node = document.createElement('li');
+        node.textContent = 'Suscrito en:' +  inputPublicar + '  --' +' Mensaje: ' + msg;
+        document.getElementById('messages').appendChild(node);
+      });
+    </script>
+
+</body>
+</html>
